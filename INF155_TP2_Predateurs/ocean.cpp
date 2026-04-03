@@ -139,7 +139,8 @@ int  numero_case(const t_ocean mer, int px, int py){
 /* Va vider le contenu de cette case = {VIDE, RIEN}.                          */
 /******************************************************************************/
 void vider_case(t_ocean mer, int px, int py){
-	mer[px][py] = VIDE;
+	mer[px][py].c_qui = RIEN;
+	mer[px][py].c_quoi = VIDE;
 }
 
 /****************************** REMPLIR CASE **********************************/
@@ -148,8 +149,8 @@ void vider_case(t_ocean mer, int px, int py){
 /* Va remplir cette case de la grille avec le contenu reçu.                   */
 /******************************************************************************/
 void remplir_case(t_ocean mer, int px, int py, t_contenu chose, int no){
-	mer[px][py].contenu = chose;
-	mer[px][py].id = no;
+	mer[px][py].c_quoi = chose;
+	mer[px][py].c_qui = no;
 }
 
 /***************************** DESSINER OCEAN *********************************/
