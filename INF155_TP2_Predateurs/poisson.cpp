@@ -8,43 +8,63 @@
 #include <assert.h>
 
 /******************************************************************************/
-/*                      DÉFINITIONS DES FONCTIONS PRIVÉES                     */
+/*                      DÃ‰FINITIONS DES FONCTIONS PRIVÃ‰ES                     */
 /******************************************************************************/
 
-/*************************** INSERT POISSON (fonction PRIVÉE) ********************/
-/* Fonction PRIVÉE qui ajoutera un poisson a la fin de la liste des poissons. */
-/* Retourne 1 si le poisson a pu etre ajouté, 0 sinon (plus de place).        */
+/*************************** INSERT POISSON (fonction PRIVÃ‰E) ********************/
+/* Fonction PRIVÃ‰E qui ajoutera un poisson a la fin de la liste des poissons. */
+/* Retourne 1 si le poisson a pu etre ajoutÃ©, 0 sinon (plus de place).        */
 /******************************************************************************/
-static int insert_poisson(t_liste_poissons* Liste_poisson, const t_animal* nemo) {
+static int insert_poisson(t_liste_poissons* Liste_poisson, const t_animal* nouveau_poisson) {
   
+  if(Liste_poisson->nb_poisson<MAX_POISSONS){
+
+    Liste_poisson->liste[Liste_poisson->nb_poisson] = *nouveau_poisson;
+
+    Liste_poisson->nb_poisson++; 
+
+    return 1;   
+  }
 
     return 0;   
 }
 
-/************************ NEW POISSON (fonction PRIVÉE) **************************/
-/* Reçoit la grille de la mer.                                                */
-/* Va créer un nouveau poisson aléatoire dans une case libre de la mer.       */
+/************************ NEW POISSON (fonction PRIVï¿½E) **************************/
+/* Reï¿½oit la grille de la mer.                                                */
+/* Va crï¿½er un nouveau poisson alï¿½atoire dans une case libre de la mer.       */
 /******************************************************************************/
 static t_animal new_poisson(t_ocean mer) {
   
+  t_animal nouveau;
+  int x, y;
 
-    return 0;
+  do{
+
+    x = rand() % LARGEUR;
+    y = rand() % HAUTEUR;
+    
+  } while (get_contenu_ocean(mer, x, y) != VIDE);
+
+  /* */
+  init_animal(&nouveau, x, y, rand() % (MAX_AGE_POISSON +1), ENERGIE_INIT_POISSON, 0);
+
+  return nouveau;
 }
 
 
 /******************************************************************************/
-/*                     DÉFINITIONS DES FONCTIONS PUBLIQUES                    */
+/*                     Dï¿½FINITIONS DES FONCTIONS PUBLIQUES                    */
 /******************************************************************************/
 
 /***************************** VIDER LISTE POISSON *******************************/
-/* Va vider la liste des poissons (état initial).                             */
+/* Va vider la liste des poissons (ï¿½tat initial).                             */
 /******************************************************************************/
 void vider_liste_poisson(t_liste_poissons* Liste_poisson) {
    
 }
 
 /************************** REMPLIR LISTE POISSON ********************************/
-/* Reçoit la liste de poissons, un nombre de poissons et la grille de la mer. */
+/* Reï¿½oit la liste de poissons, un nombre de poissons et la grille de la mer. */
 /* Va remplir la liste avec les "nb_poisson" premiers poissons.                  */
 /******************************************************************************/
 void remplir_liste_poisson(t_liste_poissons * les_poisson, int nb_poisson, t_ocean la_Mer) {
@@ -59,9 +79,9 @@ int  get_nb_poisson(const t_liste_poissons *Liste_poisson){
 }
 
 /***************************** DEPLACER POISSON **********************************/
-/* Reçoit un poisson, sa position dans la liste et la grille de la mer.       */
-/* Va tenter de déplacer le poisson vers un case voisine vide.                */
-/* Retourne 1 si le poisson a été déplacé, 0 sinon.                           */
+/* Reï¿½oit un poisson, sa position dans la liste et la grille de la mer.       */
+/* Va tenter de dï¿½placer le poisson vers un case voisine vide.                */
+/* Retourne 1 si le poisson a ï¿½tï¿½ dï¿½placï¿½, 0 sinon.                           */
 /******************************************************************************/
 int  deplacer_poisson(t_animal *nemo, int no, t_ocean mer){
     
@@ -70,10 +90,10 @@ int  deplacer_poisson(t_animal *nemo, int no, t_ocean mer){
 
 
 /******************************* AJOUTER POISSON *********************************/
-/* Reçoit la liste des poissons, un poisson-mère et la grille de la mer.      */
-/* Va tenter d'ajouter un nouveau bébé-poisson dans une case voisine libre    */
-/* du poisson reçu en paramètre.                                              */
-/* Retourne 1 si le nouveau bébé-poisson a été crée, 0 sinon.                 */
+/* Reï¿½oit la liste des poissons, un poisson-mï¿½re et la grille de la mer.      */
+/* Va tenter d'ajouter un nouveau bï¿½bï¿½-poisson dans une case voisine libre    */
+/* du poisson reï¿½u en paramï¿½tre.                                              */
+/* Retourne 1 si le nouveau bï¿½bï¿½-poisson a ï¿½tï¿½ crï¿½e, 0 sinon.                 */
 /******************************************************************************/
 int  ajouter_poisson(t_liste_poissons *Liste_poisson, t_animal *mamaf, t_ocean mer){
    
@@ -81,7 +101,7 @@ int  ajouter_poisson(t_liste_poissons *Liste_poisson, t_animal *mamaf, t_ocean m
 }
 
 /******************************* TUER POISSON ************************************/
-/* Va éliminer un poisson de la liste, on remplace l'élément supprimé par le  */
+/* Va ï¿½liminer un poisson de la liste, on remplace l'ï¿½lï¿½ment supprimï¿½ par le  */
 /* dernier dans le tableau.                                                   */
 /******************************************************************************/
 void tuer_poisson(t_liste_poissons *Liste_poisson, int pos, t_ocean mer){
@@ -89,16 +109,16 @@ void tuer_poisson(t_liste_poissons *Liste_poisson, int pos, t_ocean mer){
 }
 
 /********************************* GET POISSON ***********************************/
-/* Reçoit la liste des poissons ainsi qu'un indice-position.                  */
-/* Retourne le poisson se trouvant à cette position dans la liste.            */
+/* Reï¿½oit la liste des poissons ainsi qu'un indice-position.                  */
+/* Retourne le poisson se trouvant ï¿½ cette position dans la liste.            */
 /******************************************************************************/
 t_animal get_poisson(const t_liste_poissons *Liste_poisson, int i){
   return 0;
 }
 
 /***************************** MODIFIER POISSON **********************************/
-/* Reçoit la liste des poissons ainsi qu'un indice-position et un poisson.    */
-/* Va écrire le contenu du poisson reçu à la position donnée dans la liste.   */
+/* Reï¿½oit la liste des poissons ainsi qu'un indice-position et un poisson.    */
+/* Va ï¿½crire le contenu du poisson reï¿½u ï¿½ la position donnï¿½e dans la liste.   */
 /******************************************************************************/
 void modifier_poisson(t_liste_poissons *Liste_poisson, int i, const t_animal *newf){
  
