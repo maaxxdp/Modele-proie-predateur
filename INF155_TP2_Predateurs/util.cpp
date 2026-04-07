@@ -9,15 +9,15 @@
 #include"winconsole.h"
 
 /**********************************************************************/
-/* Fonctions pour énérer une valeur aléatoire entière.                */
+/* Fonctions pour ï¿½nï¿½rer une valeur alï¿½atoire entiï¿½re.                */
 /**********************************************************************/
 
-/* Fonction pour initialiser le générateur aléatoire. */
+/* Fonction pour initialiser le gï¿½nï¿½rateur alï¿½atoire. */
 void init_alea(){
   srand(time(NULL));
 }
 
-/* Fonction aléatoire qui renvoie un entier inclu entre [min..max]. */
+/* Fonction alï¿½atoire qui renvoie un entier inclu entre [min..max]. */
 int  alea(int min, int max){
   return (int)((1.0 * rand()) / (RAND_MAX + 1) * (max-min+1)) + min;
 }
@@ -31,23 +31,23 @@ void delai_ecran(int msec){
 }
 
 /************************** EFFACER_LIGNE *****************************/
-/* Efface le contenu de la ligne-écran "y".                           */
+/* Efface le contenu de la ligne-ï¿½cran "y".                           */
 /**********************************************************************/
 void effacer_ligne(int y) {
-	gotoxy(0, y + DEBUT_MER);     //on efface cette ligne à l'écran
+	gotoxy(0, y + DEBUT_MER);     //on efface cette ligne ï¿½ l'ï¿½cran
 	clreol();
 }
 
 /*************************** AFFICHER CHAR ****************************/
-/* Affichera 'ch' qui est soit CH_POISSON ou CH_REQUIN, à la position */
-/* (y, x).   Le caractère CH_REQUIN sera affiché en rouge.            */
+/* Affichera 'ch' qui est soit CH_POISSON ou CH_REQUIN, ï¿½ la position */
+/* (y, x).   Le caractï¿½re CH_REQUIN sera affichï¿½ en rouge.            */
 /**********************************************************************/
 void afficher_char(char ch, int x, int y) {
-	gotoxy(x, y + DEBUT_MER);     //aller à la position-écran de cette case
+	gotoxy(x, y + DEBUT_MER);     //aller ï¿½ la position-ï¿½cran de cette case
 
 	if (ch == CH_REQUIN) {
 		textcolor(LIGHTRED);
-		printf("%c", ch);       //caractère-requin en ROUGE
+		printf("%c", ch);       //caractï¿½re-requin en ROUGE
 		textcolor(WHITE);
 	}
 	else
@@ -55,7 +55,7 @@ void afficher_char(char ch, int x, int y) {
 }
 
 /****************************** AFFICHER ETAT *********************************/
-/* Reçoit: numéro d'itération, nombre de poissons, nombre de requins.         */
+/* Reï¿½oit: numï¿½ro d'itï¿½ration, nombre de poissons, nombre de requins.         */
 /* Va afficher ces valeurs au haut de la grille de la mer.                    */
 /******************************************************************************/
 void afficher_etat(int iter, int nb_poissons, int nb_requins) {

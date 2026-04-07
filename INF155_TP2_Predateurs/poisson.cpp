@@ -115,45 +115,30 @@ int  deplacer_poisson(t_animal *nemo, int no, t_ocean mer){
 
   get_position(nemo, &x, &y); // Récupérer la position actuelle
 
-  // 0- droite (1,0), 1- gauche(-1,0), 2- bas (0,1) et 3- haut (0,-1)
-  int dx[4] ={1, -1, 0, 0};
-  int dy[4] ={0, 0, 1, -1};
+  // Si aucune case voisine n'est libre, le poisson ne se déplace pas
+  if (nb_voisins_libre(mer, x, y) == 0){
 
-  for (int i = 0; i < 4; i++) {
-
-    // Calcul des nouvelles positions en x et y
-    nx = x + dx[i];
-    ny = y + dy[i];
-
-    // Faire traverser le poisson de l'autre coté de l'écran horizontalement
-    if (nx < 0){
-      nx = LARGEUR - 1;
-    } else if (nx >= LARGEUR){
-      nx = 0;
-    }
-
-    // Vérifier que la position verticale est dans les limites de la grille océan
-    if(ny >= 0 && ny < HAUTEUR){
-      
-      // Vérifier si la case est vide
-      if (contenu_case(mer, nx, ny) == VIDE) {
-
-        // Vider l'ancienne position du poisson de ses informations
-        remplir_case(mer, x, y, VIDE, RIEN);
-
-        // Remplir la nouvelle case avec les informations du poisson
-        remplir_case(mer, nx, ny, POISSON, no); 
-
-        // Mettre à jour la nouvelle position du poisson
-        set_position(nemo, nx, ny);
-
-        return 1; // Déplacement réussi
-      }
-    }
-
+    return 0;
   }
 
-  return 0; // Aucun déplacement possible
+    // Initialiser la nouvelles position avec la position en x et y actuelle
+    nx = x;
+    ny = y;
+
+    // Trouver une case voisine libre aléatoirement
+    trouve_voisin_alea(mer, &nx, &ny);
+
+    // Vider l'ancienne position du poisson de ses informations
+    remplir_case(mer, x, y, VIDE, RIEN);
+
+    // Remplir la nouvelle case avec les informations du poisson
+    remplir_case(mer, nx, ny, POISSON, no); 
+
+    // Mettre à jour la nouvelle position du poisson
+    set_position(nemo, nx, ny);
+
+    return 1; // Déplacement réussi
+
 }
 
 /******************************* AJOUTER POISSON *********************************/
@@ -163,8 +148,49 @@ int  deplacer_poisson(t_animal *nemo, int no, t_ocean mer){
 /* Retourne 1 si le nouveau b�b�-poisson a �t� cr�e, 0 sinon.                 */
 /******************************************************************************/
 int  ajouter_poisson(t_liste_poissons *Liste_poisson, t_animal *mamaf, t_ocean mer){
-   
-   return 0;    
+  
+  t_animal bebe;
+  int x, y;
+
+  get_position (mamaf, &x, &y); // Récupérer la position du poisson mère
+
+  // Si aucune case voisine n'est libre, aucun bébé ne nait
+  if (nb_voisins_libre (mer, x, y) == 0){
+
+    return 0;
+  }
+
+  // Réinitialisation de la gestation du poisson-mère que le bébé soit né ou pas
+  reset_gestation(mamaf, -NB_JRS_GEST_POISSON); 
+
+  // Simulation d'une fausse couche (33%)
+  if (alea(1, 3) == 1){
+
+    return 0;
+  }
+
+  // Si la liste est pleine, on ne crée pas de nouveau poisson
+  if (Liste_poisson-> nb_poisson >= MAX_POISSONS){
+
+    return 0;
+  }
+  
+  // Choisir une case voisine libre pour le bébé
+  trouve_voisin_alea(mer, &x, &y);
+
+  // Initialiser le bébé-poisson
+  init_animal(&bebe, x, y, 0, ENERGIE_INIT_POISSON, 0);
+
+  // Ajouter un bébé à la fin de la liste
+  if (insert_poisson(Liste_poisson, &bebe)){
+
+    // Mettre le bébé dans la grille de l'océan
+    remplir_case(mer, x, y, POISSON, Liste_poisson->nb_poisson-1);
+
+    return 1; //Nouveau poisson créé
+  }
+  
+   return 0; 
 }
 
 /******************************* TUER POISSON ************************************/
@@ -172,7 +198,25 @@ int  ajouter_poisson(t_liste_poissons *Liste_poisson, t_animal *mamaf, t_ocean m
 /* dernier dans le tableau.                                                   */
 /******************************************************************************/
 void tuer_poisson(t_liste_poissons *Liste_poisson, int pos, t_ocean mer){
- 
+  
+  int x, y, dernier = Liste_poisson->nb_poisson -1;
+
+  // Enlever le poisson de la grille
+  get_position(&Liste_poisson->Liste[pos], &x, &y);
+  remplir_case(mer, x, y, VIDE, RIEN);
+
+  // Si ce n'est pas le dernier poisson
+  if (pos != dernier) {
+
+    // Copier le dernier poisson à la place du poisson supprimé
+    Liste_poisson->Liste[pos] = Liste_poisson->Liste[dernier];
+
+    // Mettre à jour la nouvelle position du poisson
+    get_position(&Liste_poisson->Liste[pos], &x, &y);
+    remplir_case(mer, x, y, POISSON, pos);
+  }
+
+  Liste_poisson->nb_poisson--; // Enlever 1 au nombre de poisson
 }
 
 /********************************* GET POISSON ***********************************/
@@ -180,7 +224,8 @@ void tuer_poisson(t_liste_poissons *Liste_poisson, int pos, t_ocean mer){
 /* Retourne le poisson se trouvant � cette position dans la liste.            */
 /******************************************************************************/
 t_animal get_poisson(const t_liste_poissons *Liste_poisson, int i){
-  return 0;
+  
+  return Liste_poisson->Liste[i];
 }
 
 /***************************** MODIFIER POISSON **********************************/
@@ -189,6 +234,7 @@ t_animal get_poisson(const t_liste_poissons *Liste_poisson, int i){
 /******************************************************************************/
 void modifier_poisson(t_liste_poissons *Liste_poisson, int i, const t_animal *newf){
  
+  Liste_poisson->Liste[i] = *newf;
 }
 
 /******************************************************************************/
