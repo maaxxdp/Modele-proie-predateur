@@ -74,11 +74,11 @@ void vider_liste_poisson(t_liste_poissons* Liste_poisson) {
 /* Va remplir la liste avec les "nb_poisson" premiers poissons.                  */
 /******************************************************************************/
 void remplir_liste_poisson(t_liste_poissons * les_poisson, int nb_poisson, t_ocean la_Mer) {
-   
+  
   t_animal nouveau;
   int i, x, y;
 
-  les_poisson -> nb_poisson = 0; // S'assurer que la liste est vide au départ
+  les_poisson->nb_poisson = 0; // S'assurer que la liste est vide au départ
 
   for (i = 0; i < nb_poisson; i++){
 
@@ -101,7 +101,7 @@ void remplir_liste_poisson(t_liste_poissons * les_poisson, int nb_poisson, t_oce
 /******************************************************************************/
 int  get_nb_poisson(const t_liste_poissons *Liste_poisson){
 
-  return Liste_poisson-> nb_poisson;
+  return Liste_poisson->nb_poisson;
 }
 
 /***************************** DEPLACER POISSON **********************************/
@@ -170,7 +170,7 @@ int  ajouter_poisson(t_liste_poissons *Liste_poisson, t_animal *mamaf, t_ocean m
   }
 
   // Si la liste est pleine, on ne crée pas de nouveau poisson
-  if (Liste_poisson-> nb_poisson >= MAX_POISSONS){
+  if (Liste_poisson->nb_poisson >= MAX_POISSONS){
 
     return 0;
   }

@@ -1,6 +1,6 @@
 /******************************************************************************/
 /* requin.CPP                                                                  */
-/* Librairie des méchants requins (prédateurs).                               */
+/* Librairie des mï¿½chants requins (prï¿½dateurs).                               */
 /******************************************************************************/
 #include "requin.h"
 #include "util.h"
@@ -9,99 +9,233 @@
 
 
 /******************************************************************************/
-/*                      DÉFINITIONS DES FONCTIONS PRIVÉES                     */
+/*                      Dï¿½FINITIONS DES FONCTIONS PRIVï¿½ES                     */
 /******************************************************************************/
 
-/************************** INSERT REQUIN (fonction PRIVÉE) ********************/
-/* Fonction PRIVÉE qui ajoutera un requin a la fin de la liste des requins.   */
-/* Retourne 1 si le requin a pu etre ajouté, 0 sinon (plus de place).         */
+/************************** INSERT REQUIN (fonction PRIVï¿½E) ********************/
+/* Fonction PRIVï¿½E qui ajoutera un requin a la fin de la liste des requins.   */
+/* Retourne 1 si le requin a pu etre ajoutï¿½, 0 sinon (plus de place).         */
 /******************************************************************************/
 static int insert_requin(t_liste_requins * Liste_requin, const t_animal* jaws) {
-   
+     
+    if(Liste_requin->nb_requin<MAX_REQUIN){
 
-    return 0;   
+        // Ã‰criture dans la prochaine case libre 
+        Liste_requin->Liste[Liste_requin->nb_requin] = *jaws;
+
+        // Ajout d'un nouveau requin dans le compteur du nombre de requin
+        Liste_requin->nb_requin++; 
+
+        return 1;   // Requin ajoutÃ© Ã  la liste
+    }
+
+    return 0;   // Requin non ajoutÃ© Ã  la liste car pleine
 }
 
-/************************ NEW REQUIN (fonction PRIVÉE) *************************/
-/* Reçoit la grille de la mer.                                                */
-/* Va créer un nouveau requin aléatoire dans une case libre de la mer.        */
+/************************ NEW REQUIN (fonction PRIVï¿½E) *************************/
+/* Reï¿½oit la grille de la mer.                                                */
+/* Va crï¿½er un nouveau requin alï¿½atoire dans une case libre de la mer.        */
 /******************************************************************************/
 static t_animal new_requin(t_ocean mer) {
   
-    return 0;
+    t_animal nouveau;
+    int x, y, age, energie, gestation;
+
+    // Choix alÃ©atoire d'une case dans la grille pour un nouveau requin
+    do{
+
+        x = alea(0, LARGEUR - 1) ; // Position en x
+        y = alea(0, HAUTEUR - 1); // Position en y 
+
+    } while (contenu_case(mer, x, y) != VIDE); // Tant que la case n'est pas vide
+
+    age = alea(0, MAX_AGE_SHRK);
+    energie = alea(JRS_DIGESTION, JRS_DIGESTION * 4);
+
+    if (age >= NB_JRS_PUB_SHRK) {
+        gestation = alea(1, NB_JRS_GEST_SHRK);
+    } else{
+        gestation = 0;
+    }
+
+    /* Initialisation du requin: position x & y trouvÃ© ci-dessus, attribution d'un Ã¢ge choisi
+    alÃ©atoirement entre [0, MAX_AGE_SHRK], une Ã©nergie alÃ©atoire entre [JRS_DIGESTION, JRS_DIGESTION * 4] 
+    et initialisation du nombre de jours de gestation selon l'Ã¢ge.*/
+    init_animal(&nouveau, x, y, age, energie, gestation);
+
+    return nouveau;
+
 }
 
-
 /******************************************************************************/
-/*                     DÉFINITIONS DES FONCTIONS PUBLIQUES                    */
+/*                     Dï¿½FINITIONS DES FONCTIONS PUBLIQUES                    */
 /******************************************************************************/
 
 /***************************** VIDER LISTE REQUIN ******************************/
-/* Va vider la liste des requins (état initial).                              */
+/* Va vider la liste des requins (ï¿½tat initial).                              */
 /******************************************************************************/
 void vider_liste_requin(t_liste_requins *Liste_requin){
 
+    Liste_requin->nb_requin = 0;
 }
 
 /************************** REMPLIR LISTE REQUIN *******************************/
-/* Reçoit la liste de requins, un nombre de requins et la grille de la mer.   */
+/* Reï¿½oit la liste de requins, un nombre de requins et la grille de la mer.   */
 /* Va remplir la liste avec les "nb_requins" premiers requins.                */
 /******************************************************************************/
 void remplir_liste_requin(t_liste_requins* les_requin, int nb_requins, t_ocean la_Mer) {
   
+    t_animal nouveau;
+    int i, x, y;
+
+    les_requin->nb_requin = 0; // S'assurer que la liste est vide au dÃ©part
+
+    for (i = 0; i < nb_requins; i++){
+
+        nouveau = new_requin(la_Mer); // CrÃ©ation d'un nouveau requin
+
+        // Ajout d'un requin dans la liste
+        if(insert_requin(les_requin, &nouveau)){
+
+            // RÃ©cupÃ©rer la position du nouveau requin crÃ©Ã© dans var nouveau
+            get_position (&nouveau, &x, &y);
+
+            // Mettre le requin dans la grille de l'ocÃ©an
+            remplir_case(la_Mer, x, y, REQUIN, les_requin->nb_requin-1);
+        }
+    }
 }
 
 /****************************** GET NB REQUINS *********************************/
 /* Retoure le nombre actuel de requins dans la liste.                         */
 /******************************************************************************/
 int  get_nb_requins(const t_liste_requins *Liste_requin){
-  return 0;
+
+    return Liste_requin->nb_requin;
 }
 
 /******************************* DEPLACER REQUIN *******************************/
-/* Reçoit un requin, sa position dans la liste et la grille de la mer.        */
-/* Va tenter de déplacer le requin vers un case voisine vide.                 */
-/* Retourne 1 si le requin a été déplacé, 0 sinon.                            */
+/* Reï¿½oit un requin, sa position dans la liste et la grille de la mer.        */
+/* Va tenter de dï¿½placer le requin vers un case voisine vide.                 */
+/* Retourne 1 si le requin a ï¿½tï¿½ dï¿½placï¿½, 0 sinon.                            */
 /******************************************************************************/
 int  deplacer_requin(t_animal *jaws, int no, t_ocean mer){
-    
 
-   return 0;     
+    int x, y, nx, ny;
+
+    get_position(jaws, &x, &y); // RÃ©cupÃ©rer la position actuelle
+
+    // Si aucune case voisine n'est libre, le requin ne se dÃ©place pas
+    if (nb_voisins_libre(mer, x, y) == 0){
+      return 0;
+    }
+
+    // Initialiser la nouvelles position avec la position en x et y actuelle
+    nx = x;
+    ny = y;
+  
+    // Trouver une case voisine libre alÃ©atoirement
+    trouve_voisin_alea(mer, &nx, &ny);
+
+    // Vider l'ancienne position du requin du requin
+    remplir_case(mer, x, y, VIDE, RIEN);
+  
+    // Remplir la nouvelle case avec les informations du requin
+    remplir_case(mer, nx, ny, REQUIN, no); 
+  
+    // Mettre Ã  jour la nouvelle position du requin
+    set_position(jaws, nx, ny);
+  
+    return 1; // DÃ©placement rÃ©ussi    
 }
 
 /***************************** AJOUTER REQUIN **********************************/
-/* Reçoit la liste des requins, un requin-mère et la grille de la mer.        */
-/* Va tenter d'ajouter un nouveau bébé-requin dans une case voisine libre     */
-/* du requin reçu en paramètre.                                               */
-/* Retourne 1 si le nouveau bébé-requin a été crée, 0 sinon.                  */
+/* Reï¿½oit la liste des requins, un requin-mï¿½re et la grille de la mer.        */
+/* Va tenter d'ajouter un nouveau bï¿½bï¿½-requin dans une case voisine libre     */
+/* du requin reï¿½u en paramï¿½tre.                                               */
+/* Retourne 1 si le nouveau bï¿½bï¿½-requin a ï¿½tï¿½ crï¿½e, 0 sinon.                  */
 /******************************************************************************/
 int  ajouter_requin(t_liste_requins *Liste_requin, t_animal *mamash, t_ocean mer){ 
-   
+    
+    t_animal bebe;
+    int x, y;
+
+    get_position(mamash, &x, &y); // RÃ©cupÃ©rer la position du requin-parent
+
+    // Si aucune case voisine n'est libre, aucun bÃ©bÃ© ne naÃ®t
+    if (nb_voisins_libre(mer, x, y) == 0) {
+        return 0;
+    }
+
+    // Si la liste est pleine, on ne crÃ©e pas de nouveau requin
+    if (Liste_requin->nb_requin >= MAX_REQUIN) {
+        reset_gestation(mamash, -NB_JRS_GEST_SHRK);
+        return 0;
+    }
+
+    // Choisir une case voisine libre pour le bÃ©bÃ©
+    trouve_voisin_alea(mer, &x, &y);
+
+    // Initialiser le bÃ©bÃ©-requin
+    init_animal(&bebe, x, y, 0, JRS_DIGESTION * 3, 0);
+
+    // RÃ©initialiser la gestation du parent
+    reset_gestation(mamash, -NB_JRS_GEST_SHRK);
+
+    // Ajouter le bÃ©bÃ© Ã  la fin de la liste
+    if (insert_requin(Liste_requin, &bebe)) {
+
+        // Inscrire le bÃ©bÃ© dans la grille de l'ocÃ©an
+        remplir_case(mer, x, y, REQUIN, Liste_requin->nb_requin - 1);
+
+        return 1; // Nouveau requin crÃ©Ã©
+    }
+
    return 0;      
 }
 
 /******************************* TUER REQUIN **********************************/
-/* Va éliminer un requin de la liste, on remplace l'élément supprimé par le   */
+/* Va ï¿½liminer un requin de la liste, on remplace l'ï¿½lï¿½ment supprimï¿½ par le   */
 /* dernier dans le tableau.                                                   */
 /******************************************************************************/
 void tuer_requin(t_liste_requins *Liste_requin, int pos, t_ocean mer){
   
+    int x, y, dernier = Liste_requin->nb_requin - 1;
+
+    // Enlever le requin de la grille
+    get_position(&Liste_requin->Liste[pos], &x, &y);
+    remplir_case(mer, x, y, VIDE, RIEN);
+
+    // Si ce n'est pas le dernier requin
+    if (pos != dernier) {
+
+        // Copier le dernier requin Ã  la place du requin supprimÃ©
+        Liste_requin->Liste[pos] = Liste_requin->Liste[dernier];
+
+        // Mettre Ã  jour l'indice du requin dÃ©placÃ© dans la grille
+        get_position(&Liste_requin->Liste[pos], &x, &y);
+        remplir_case(mer, x, y, REQUIN, pos);
+    }
+
+    Liste_requin->nb_requin--; // Enlever 1 au nombre de requins
 }
 
 /******************************* GET REQUIN ************************************/
-/* Reçoit la liste des requins ainsi qu'un indice-position.                   */
-/* Retourne le requin se trouvant à cette position dans la liste.             */
+/* Reï¿½oit la liste des requins ainsi qu'un indice-position.                   */
+/* Retourne le requin se trouvant ï¿½ cette position dans la liste.             */
 /******************************************************************************/
 t_animal get_requin(const t_liste_requins *Liste_requin, int pos){
-	return 0;
+
+    return Liste_requin->Liste[pos];
 }
 
 /***************************** MODIFIER REQUIN *********************************/
-/* Reçoit la liste des requins ainsi qu'un indice-position et un requin.      */
-/* Va écrire le contenu du requin reçu à la position donnée dans la liste.    */
+/* Reï¿½oit la liste des requins ainsi qu'un indice-position et un requin.      */
+/* Va ï¿½crire le contenu du requin reï¿½u ï¿½ la position donnï¿½e dans la liste.    */
 /******************************************************************************/
 void modifier_requin(t_liste_requins *Liste_requin, int pos, const t_animal *jaws){
-
+    
+    Liste_requin->Liste[pos] = *jaws;
 }
 
 /******************************************************************************/
