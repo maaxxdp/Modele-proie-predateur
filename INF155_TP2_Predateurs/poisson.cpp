@@ -19,14 +19,16 @@ static int insert_poisson(t_liste_poissons* Liste_poisson, const t_animal* nouve
   
   if(Liste_poisson->nb_poisson<MAX_POISSONS){
 
-    Liste_poisson->liste[Liste_poisson->nb_poisson] = *nouveau_poisson;
+    // Écriture dans la prochaine case libre 
+    Liste_poisson->Liste[Liste_poisson->nb_poisson] = *nouveau_poisson;
 
+    // Ajout d'un nouveau poisson dans le compteur du nombre de poisson
     Liste_poisson->nb_poisson++; 
 
-    return 1;   
+    return 1;   // Poisson ajouté à la liste
   }
 
-    return 0;   
+    return 0;   // Poisson non ajouté à la liste car pleine
 }
 
 /************************ NEW POISSON (fonction PRIV�E) **************************/
@@ -38,19 +40,21 @@ static t_animal new_poisson(t_ocean mer) {
   t_animal nouveau;
   int x, y;
 
+// Choix aléatoire d'une case dans la grille pour un nouveau poisson
   do{
 
-    x = rand() % LARGEUR;
-    y = rand() % HAUTEUR;
-    
-  } while (get_contenu_ocean(mer, x, y) != VIDE);
+    x = alea(0, LARGEUR - 1) ; // Position en x
+    y = alea(0, HAUTEUR - 1); // Position en y 
 
-  /* */
-  init_animal(&nouveau, x, y, rand() % (MAX_AGE_POISSON +1), ENERGIE_INIT_POISSON, 0);
+  } while (contenu_case(mer, x, y) != VIDE); // Tant que la case n'est pas vide
+
+  /* Initialisation du poisson: position x & y trouvé ci-dessus, attribution d'un âge choisi
+   aléatoirement entre [0, MAX_AGE_POISSON], une énergie de départ équivalent à 
+   ENERGIE_INIT_POISSON, et initialisation à 0 jours de gestation.*/
+  init_animal(&nouveau, x, y, alea(0, MAX_AGE_POISSON), ENERGIE_INIT_POISSON, 0);
 
   return nouveau;
 }
-
 
 /******************************************************************************/
 /*                     D�FINITIONS DES FONCTIONS PUBLIQUES                    */
@@ -61,6 +65,8 @@ static t_animal new_poisson(t_ocean mer) {
 /******************************************************************************/
 void vider_liste_poisson(t_liste_poissons* Liste_poisson) {
    
+  Liste_poisson->nb_poisson = 0;
+
 }
 
 /************************** REMPLIR LISTE POISSON ********************************/
@@ -69,13 +75,33 @@ void vider_liste_poisson(t_liste_poissons* Liste_poisson) {
 /******************************************************************************/
 void remplir_liste_poisson(t_liste_poissons * les_poisson, int nb_poisson, t_ocean la_Mer) {
    
+  t_animal nouveau;
+  int i, x, y;
+
+  les_poisson -> nb_poisson = 0; // S'assurer que la liste est vide au départ
+
+  for (i = 0; i < nb_poisson; i++){
+
+      nouveau = new_poisson(la_Mer); // Création d'un nouveau poisson
+
+      // Ajout d'un poisson dans la liste
+      if(insert_poisson(les_poisson, &nouveau)){
+
+        // Récupérer la position du nouveau poisson créé dans var nouveau
+        get_position (&nouveau, &x, &y);
+
+        // Mettre le poisson dans la grille de l'océan
+        remplir_case(la_Mer, x, y, POISSON, les_poisson -> nb_poisson-1);
+      }
+  }
 }
 
 /****************************** GET NB POISSON ***********************************/
 /* Retoure le nombre actuel de poissons dans la liste.                        */
 /******************************************************************************/
 int  get_nb_poisson(const t_liste_poissons *Liste_poisson){
-  return 0;
+
+  return Liste_poisson-> nb_poisson;
 }
 
 /***************************** DEPLACER POISSON **********************************/
@@ -84,10 +110,44 @@ int  get_nb_poisson(const t_liste_poissons *Liste_poisson){
 /* Retourne 1 si le poisson a �t� d�plac�, 0 sinon.                           */
 /******************************************************************************/
 int  deplacer_poisson(t_animal *nemo, int no, t_ocean mer){
-    
-   return 0;   
-}
+  
+  int x, y, nx, ny;
 
+  get_position(nemo, &x, &y); // Récupérer la position actuelle
+
+  // 0- droite (1,0), 1- gauche(-1,0), 2- bas (0,1) et 3- haut (0,-1)
+  int dx[4] ={1, -1, 0, 0};
+  int dy[4] ={0, 0, 1, -1};
+
+  for (int i = 0; i < 4; i++) {
+
+    // Calcul des nouvelles positions en x et y
+    nx = x + dx[i];
+    ny = y + dy[i];
+
+    // Vérifier que ces positions existent dans la grille océan
+    if(nx >= 0 && nx < LARGEUR && ny >= 0 && ny < HAUTEUR){
+      
+      // Vérifier si la case est vide
+      if (contenu_case(mer, nx, ny) == VIDE) {
+
+        // Vider l'ancienne position du poisson de ses informations
+        remplir_case(mer, x, y, VIDE, RIEN);
+
+        // Remplir la nouvelle case avec les informations du poisson
+        remplir_case(mer, nx, ny, POISSON, no); 
+
+        // Mettre à jour la nouvelle position du poisson
+        set_position(nemo, nx, ny);
+
+        return 1; // Déplacement réussi
+      }
+    }
+
+  }
+
+  return 0; // Aucun déplacement possible car tout est plein
+}
 
 /******************************* AJOUTER POISSON *********************************/
 /* Re�oit la liste des poissons, un poisson-m�re et la grille de la mer.      */
