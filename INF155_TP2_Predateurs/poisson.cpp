@@ -125,8 +125,15 @@ int  deplacer_poisson(t_animal *nemo, int no, t_ocean mer){
     nx = x + dx[i];
     ny = y + dy[i];
 
-    // Vérifier que ces positions existent dans la grille océan
-    if(nx >= 0 && nx < LARGEUR && ny >= 0 && ny < HAUTEUR){
+    // Faire traverser le poisson de l'autre coté de l'écran horizontalement
+    if (nx < 0){
+      nx = LARGEUR - 1;
+    } else if (nx >= LARGEUR){
+      nx = 0;
+    }
+
+    // Vérifier que la position verticale est dans les limites de la grille océan
+    if(ny >= 0 && ny < HAUTEUR){
       
       // Vérifier si la case est vide
       if (contenu_case(mer, nx, ny) == VIDE) {
@@ -146,7 +153,7 @@ int  deplacer_poisson(t_animal *nemo, int no, t_ocean mer){
 
   }
 
-  return 0; // Aucun déplacement possible car tout est plein
+  return 0; // Aucun déplacement possible
 }
 
 /******************************* AJOUTER POISSON *********************************/
