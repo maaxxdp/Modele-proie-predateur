@@ -1,81 +1,94 @@
 /******************************************************************************/
 /*  ANIMAL.CPP                                                                */         
-/*  Module utilitaire qui permet de gérer un type "t_animal"                  */
-/*  Conception : Eric Thé                                                     */
+/*  Module utilitaire qui permet de gï¿½rer un type "t_animal"                  */
+/*  Conception : Eric Thï¿½                                                     */
 /******************************************************************************/
 
 #include "animal.h"
 
 /****************************** INIT ANIMAL ***********************************/
-/* Reçoit un animal et ses valeurs initiales, va initialiser l'animal reçu.   */
+/* Reï¿½oit un animal et ses valeurs initiales, va initialiser l'animal reï¿½u.   */
 /******************************************************************************/
 void init_animal(t_animal *animal, int px, int py, int age, int energie, int gest){
- 
+    animal->posx = px;
+    animal->posy = py;
+    animal->age = age;
+    animal->energie_sante = energie;
+    animal->jrs_gest = gest;
 }
 
 /****************************** GET POSITION **********************************/
-/* Reçoit un animal et retourne sa position via [*px, *py].                   */
+/* Reï¿½oit un animal et retourne sa position via [*px, *py].                   */
 /******************************************************************************/
 void get_position(const t_animal *animal, int *px, int *py){  
-
+    *px = animal->posx;
+    *py = animal->posy;
 }
 
 /****************************** SET POSITION **********************************/
-/* Reçoit un animal et une position et va inscrire cette position à l'animal. */
+/* Reï¿½oit un animal et une position et va inscrire cette position ï¿½ l'animal. */
 /******************************************************************************/
 void set_position(t_animal *animal, int px, int py){  
-  
+    animal->posx = px;
+    animal->posy = py;
 }
 
 /**************************** PUBERTE ATTEINTE ********************************/
-/* Reçoit un animal et retourne 1 si le poisson a attient l'age de            */
-/* puberté ET a terminé sa période de gestation (donc, il va procréer),       */
+/* Reï¿½oit un animal et retourne 1 si le poisson a attient l'age de            */
+/* pubertï¿½ ET a terminï¿½ sa pï¿½riode de gestation (donc, il va procrï¿½er),       */
 /* retourne 0 sinon.                                                          */
 /******************************************************************************/
 int  puberte_atteinte(const t_animal *animal, int puberte, int gestation){
-  return 0;         
+  return (animal->age >= puberte && animal->jrs_gest >= gestation) ? 1 : 0;
 }
 
 /****************************** INC AGE ***************************************/
-/* Reçoit un animal et va incrémenter son age ainsi que le nombre de jours    */
-/* en gestation de +1 jour si il est assez vieux pour procréer.               */
+/* Reï¿½oit un animal et va incrï¿½menter son age ainsi que le nombre de jours    */
+/* en gestation de +1 jour si il est assez vieux pour procrï¿½er.               */
 /******************************************************************************/
 void inc_age(t_animal *animal, int age_puberte){
- 
+    animal->age++;
+    if (animal->age >= age_puberte){
+        animal->jrs_gest++;
+    }
 }
 
 /************************** RESET GESTATION ***********************************/
-/* Reçoit un animal et va réinitialiser les jours de gestation à "val".       */
+/* Reï¿½oit un animal et va rï¿½initialiser les jours de gestation ï¿½ "val".       */
 /******************************************************************************/
 void reset_gestation(t_animal *animal, int val){       
-
+    animal->jrs_gest = val;
 }
 
 /**************************** AJOUT ENERGIE ***********************************/
-/* Reçoit un animal et va incrémenter son niveau d'énergie de la valeur reçue */
+/* Reï¿½oit un animal et va incrï¿½menter son niveau d'ï¿½nergie de la valeur reï¿½ue */
 /******************************************************************************/
 void ajout_energie(t_animal *animal, int energie){
-    
+    animal->energie_sante += energie;
 }
 
 /**************************** DEC ENERGIE *************************************/
-/* Reçoit un animal et va décrémenter son niveau d'énergie de -1.             */
+/* Reï¿½oit un animal et va dï¿½crï¿½menter son niveau d'ï¿½nergie de -1.             */
 /******************************************************************************/
 void dec_energie(t_animal *animal){   
-
+    animal->energie_sante--;
 }
 
 /**************************** GET ENERGIE *************************************/
-/* Reçoit un animal et va retourner son niveau d'énergie.                     */
+/* Reï¿½oit un animal et va retourner son niveau d'ï¿½nergie.                     */
 /******************************************************************************/
 int  get_energie(t_animal *animal){
-	return 0;
+	return animal->energie_sante;
 }
 
 /***************************** EST MORT ***************************************/
-/* Retourne 1 si l'animal reçu vient de mourir de faim (plus d'énergie)       */
-/* OU si il a atteint son âge maximal (age_max). On retourne 0 sinon.         */
+/* Retourne 1 si l'animal reï¿½u vient de mourir de faim (plus d'ï¿½nergie)       */
+/* OU si il a atteint son ï¿½ge maximal (age_max). On retourne 0 sinon.         */
 /******************************************************************************/
 int  est_mort(const t_animal *animal, int age_max){   
-   return 0;
+    if (animal->energie_sante <= 0 || animal->age > age_max) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
