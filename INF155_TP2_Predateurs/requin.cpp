@@ -88,7 +88,14 @@ void remplir_liste_requin(t_liste_requins* les_requin, int nb_requins, t_ocean l
     t_animal nouveau;
     int i, x, y;
 
-    les_requin->nb_requin = 0; // S'assurer que la liste est vide au départ
+    les_requin->Liste = (t_animal*) malloc(nb_requins * sizeof(t_animal));
+
+if (les_requin->Liste == NULL) {
+    return;
+}
+
+les_requin->taille_liste = nb_requins;
+les_requin->nb_requin = 0;
 
     for (i = 0; i < nb_requins; i++){
 
@@ -238,4 +245,9 @@ void modifier_requin(t_liste_requins *Liste_requin, int pos, const t_animal *jaw
     Liste_requin->Liste[pos] = *jaws;
 }
 
-/******************************************************************************/
+void liberer_liste_requin(t_liste_requins *Liste_requin){
+    free(Liste_requin->Liste);
+    Liste_requin->Liste = NULL;
+    Liste_requin->nb_requin = 0;
+    Liste_requin->taille_liste = 0;
+}
