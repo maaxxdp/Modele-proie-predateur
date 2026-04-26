@@ -17,7 +17,7 @@
 /******************************************************************************/
 static int insert_poisson(t_liste_poissons* Liste_poisson, const t_animal* nouveau_poisson) {
   
-  if(Liste_poisson->nb_poisson<MAX_POISSONS){
+  if(Liste_poisson->nb_poisson < Liste_poisson->taille_liste){
 
     // Écriture dans la prochaine case libre 
     Liste_poisson->Liste[Liste_poisson->nb_poisson] = *nouveau_poisson;
@@ -170,7 +170,7 @@ int  ajouter_poisson(t_liste_poissons *Liste_poisson, t_animal *mamaf, t_ocean m
   }
 
   // Si la liste est pleine, on ne crée pas de nouveau poisson
-  if (Liste_poisson->nb_poisson >= MAX_POISSONS){
+ if (Liste_poisson->nb_poisson >= Liste_poisson->taille_liste){
 
     return 0;
   }
