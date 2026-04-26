@@ -18,7 +18,7 @@
 /******************************************************************************/
 static int insert_requin(t_liste_requins * Liste_requin, const t_animal* jaws) {
      
-    if(Liste_requin->nb_requin<MAX_REQUIN){
+   if(Liste_requin->nb_requin < Liste_requin->taille_liste){
 
         // Écriture dans la prochaine case libre 
         Liste_requin->Liste[Liste_requin->nb_requin] = *jaws;
@@ -168,7 +168,7 @@ int  ajouter_requin(t_liste_requins *Liste_requin, t_animal *mamash, t_ocean mer
     }
 
     // Si la liste est pleine, on ne crée pas de nouveau requin
-    if (Liste_requin->nb_requin >= MAX_REQUIN) {
+    if (Liste_requin->nb_requin >= Liste_requin->taille_liste) {
         reset_gestation(mamash, -NB_JRS_GEST_SHRK);
         return 0;
     }
