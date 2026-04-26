@@ -17,9 +17,9 @@
 
 /* Type-structure pour la liste des requins */
 typedef struct{
-  t_animal* Liste;
-  int nb_requin;
-  int taille_liste;
+  t_animal* Liste;     // tableau dynamique
+  int nb_requin;       // nombre actuel de requins
+  int taille_liste;    // taille maximale du tableau
 } t_liste_requins;
 
 /******************************************************************************/
@@ -60,4 +60,6 @@ void modifier_requin(t_liste_requins *, int pos, const t_animal *);
 /* Reçoit la liste des requins ainsi qu'un indice-position et un requin.
    Va écrire le contenu du requin reçu à la position donnée dans la liste. */
 
-/******************************************************************************/
+void liberer_liste_requin(t_liste_requins *);
+/* Libère la mémoire allouée dynamiquement pour la liste des requins.
+   Remet les champs de la structure à zéro. */
