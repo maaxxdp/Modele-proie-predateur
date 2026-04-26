@@ -78,7 +78,9 @@ void remplir_liste_poisson(t_liste_poissons * les_poisson, int nb_poisson, t_oce
   t_animal nouveau;
   int i, x, y;
 
-  les_poisson->nb_poisson = 0; // S'assurer que la liste est vide au départ
+  les_poisson->Liste = (t_animal*) malloc(nb_poisson * sizeof(t_animal));
+  les_poisson->taille_liste = nb_poisson;
+  les_poisson->nb_poisson = 0;
 
   for (i = 0; i < nb_poisson; i++){
 
@@ -236,5 +238,9 @@ void modifier_poisson(t_liste_poissons *Liste_poisson, int i, const t_animal *ne
  
   Liste_poisson->Liste[i] = *newf;
 }
-
-/******************************************************************************/
+void liberer_liste_poisson(t_liste_poissons *Liste_poisson){ 
+free(Liste_poisson->Liste);
+Liste_poisson->Liste = NULL; 
+Liste_poisson->nb_poisson = 0;
+Liste_poisson->taille_liste = 0;
+}
