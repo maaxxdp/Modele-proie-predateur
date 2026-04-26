@@ -57,4 +57,6 @@ void modifier_poisson(t_liste_poissons *, int i, const t_animal *);
 /* Reçoit la liste des poissons ainsi qu'un indice-position et un poisson.
    Va écrire le contenu du poisson reçu à la position donnée dans la liste. */
 
-/******************************************************************************/
+void liberer_liste_poisson(t_liste_poissons *);
+/* Libère la mémoire allouée dynamiquement pour la liste des poissons.
+   Remet les champs de la structure à zéro. */
