@@ -1,15 +1,15 @@
 /******************************************************************************/
 /* MAIN.CPP                                                                   */
 /*                                                                            */
-/* Programme qui implémente la dynamique proie-prédateur de façon itérative.  */
-/* Notre modèle va afficher des ti-poissons et des requins dans une "mer" de  */
-/* dimension limitée.  Les poissons ont une source infinie de nourriture et   */
-/* vont donc procréer automatiquement sans contrainte (sauf la taille max. de */
+/* Programme qui impl�mente la dynamique proie-pr�dateur de fa�on it�rative.  */
+/* Notre mod�le va afficher des ti-poissons et des requins dans une "mer" de  */
+/* dimension limit�e.  Les poissons ont une source infinie de nourriture et   */
+/* vont donc procr�er automatiquement sans contrainte (sauf la taille max. de */
 /* la liste des poissons).  Les requins ont besoin de manger des ti-poissons  */
-/* pour survivre.  La maturité des requins sera plus lente et la reproduction */
-/* des requins sera moins fréquente. Chaque itération représente 1 "jour" de  */
+/* pour survivre.  La maturit� des requins sera plus lente et la reproduction */
+/* des requins sera moins fr�quente. Chaque it�ration repr�sente 1 "jour" de  */
 /* vie.  Le programme boucle jusqu'a l'extinction des poissons ou requins.    */
-/* Un mode sans affichage est offert ou les données après chaque itération    */
+/* Un mode sans affichage est offert ou les donn�es apr�s chaque it�ration    */
 /* sont inscrites dans un fichier texte pour analyse.                         */
 /******************************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
@@ -22,7 +22,7 @@
 #include"requin.h"
 
 /******************************************************************************/
-/*                        DÉCLARATIONS DES CONSTANTES                         */
+/*                        D�CLARATIONS DES CONSTANTES                         */
 /******************************************************************************/
 
 #define NB_POISSONS_INIT 200  //nombre initial de poissons
@@ -34,29 +34,29 @@
 #define NOM_FICHIER  "stats.txt"
 
 /******************************************************************************/
-/*                         DÉCLARATIONS DE FONCTIONS                          */
+/*                         D�CLARATIONS DE FONCTIONS                          */
 /******************************************************************************/
 
 int  getmode();
 /* Demande et valide le mode d'affichage. */
 
 void chasser_poissons(t_liste_poissons *, t_liste_requins *, t_ocean);
-/* Reçoit la liste des poissons, la liste des requins et la mer.
-   On identifie les poissons qui seront mangés par les requins. */
+/* Re�oit la liste des poissons, la liste des requins et la mer.
+   On identifie les poissons qui seront mang�s par les requins. */
 
 void requins_morts(t_liste_requins *, t_ocean);
-/* Reçoit la liste de requins et la mer.  
+/* Re�oit la liste de requins et la mer.  
    On identifie les requins qui vont mourir de faim. */
 
 void deplacer_requins(t_liste_requins *, t_ocean);
-/* Reçoit la liste de requins et la mer. 
-   On ajoute des bébé-requins a la liste s'il y a lieu.
-   On déplace les requins qui restent de une position-écran. */
+/* Re�oit la liste de requins et la mer. 
+   On ajoute des b�b�-requins a la liste s'il y a lieu.
+   On d�place les requins qui restent de une position-�cran. */
 
 void deplacer_poissons(t_liste_poissons *, t_ocean);
-/* Reçoit la liste de poissons et la mer. 
-   On ajoute des bébé-poissons a la liste s'il y a lieu.
-   On déplace les poissons qui restent de une position-écran. */
+/* Re�oit la liste de poissons et la mer. 
+   On ajoute des b�b�-poissons a la liste s'il y a lieu.
+   On d�place les poissons qui restent de une position-�cran. */
 
 /******************************************************************************/
 /*                             PROGRAMME PRINCIPAL                            */
@@ -66,79 +66,83 @@ int main(){
   t_liste_poissons  les_poissons; //la liste des ti-poissons
   t_liste_requins   les_requins;  //la liste des requins
   int nb_poisson, nb_requin;      //nombre de poissons et requins
-  int stop=0, iter=0;             //pour contrôler et compter les itérations
+  int stop=0, iter=0;             //pour contr�ler et compter les it�rations
   int MODE_AFF = getmode();       //le mode d'affichage (= 0/1)
-FILE *fichier = NULL;
 
-if (MODE_AFF == 0) {
-  fichier = fopen(NOM_FICHIER, "w");
+  /* Variable-fichier pour �criture de donn�es. Sera ouvert SI MODE_AFF = 0 */
+  FILE *fich = (MODE_AFF) ? NULL : fopen(NOM_FICHIER, "w");
 
-  if (fichier == NULL) {
-    printf("Erreur: impossible d'ouvrir le fichier.\n");
-    return EXIT_FAILURE;
-  }
+  init_alea();     //initialiser le g�n�rateur al�atoire
 
-  fprintf(fichier, "Iteration Poissons Requins\n");
-}
-  /* Variable-fichier pour écriture de données. Sera ouvert SI MODE_AFF = 0 */
- 
-  /* on établit les conditions initiales */
+  /* on �tablit les conditions initiales */
+  nb_poisson = NB_POISSONS_INIT;
+  nb_requin = NB_REQUINS_INIT;
 
-  /* on vide toutes les structures de données */
- 
-  /* on génere tous les ti-poissons */
-  
+  /* on vide toutes les structures de donn�es */
+  vider_ocean(la_mer);
+  vider_liste_poisson(&les_poissons);
+  vider_liste_requin(&les_requins);
 
-  /* on génere tous les requins */
- 
+  /* on g�nere tous les ti-poissons */
+  remplir_liste_poisson(&les_poissons, nb_poisson, la_mer);
 
-  //on déssine l'état initial de la mer
+  /* on g�nere tous les requins */
+  remplir_liste_requin(&les_requins, nb_requin, la_mer);
+
+  int nbF, nbS;
+  dessiner_ocean(la_mer, &nbF, &nbS);    //on d�ssine l'�tat initial de la mer
 
   /* Boucle principale de simulation */
- 
-      //prochaine iteration
+  do{
+    iter++;    //prochaine iteration
 
-	/* identifier les poissons mangés */
+	/* identifier les poissons mang�s */
+	chasser_poissons(&les_poissons, &les_requins, la_mer);
 
 	/* identifier les requins morts */
-
+	requins_morts(&les_requins, la_mer);
 
 	/* traiter les requins restants */
-
+	deplacer_requins(&les_requins, la_mer);
 
 	/* traiter les poissons restants */
+	deplacer_poissons(&les_poissons, la_mer);
 
 	/* mise-a-jour du nombre de poissons et requins */
-
-	/* Si le mode d'affichage est allumé.. */
+	nb_poisson=get_nb_poisson(&les_poissons);
+    nb_requin=get_nb_requins(&les_requins);
 	
-  //sinon, on écrit le nombre de poissons/requins dans le fichier texte
+	/* Si le mode d'affichage est allum�.. */
 	if (MODE_AFF) {
-    dessiner_ocean(la_mer, &nb_poisson, &nb_requin);
-}
-else {
-    fprintf(fichier, "%d %d %d\n", iter, nb_poisson, nb_requin);
-}
-      
-    /* si l'utilisateur appuye sur <ESC> on arrête le programme */
-	
-   //tant qui reste des requins et poissons
+	  dessiner_ocean(la_mer, &nbF, &nbS);
+      afficher_etat(iter, nb_poisson, nb_requin);
+	  delai_ecran(TEMPS_DELAI);
+	}
+	else{  //sinon, on �crit le nombre de poissons/requins dans le fichier texte
+      fprintf(fich, "%d  %d  %d\n", iter, nb_poisson, nb_requin);
+	}
 
-  /* dessiner l'état final de la mer */
-  
+    /* si l'utilisateur appuye sur <ESC> on arr�te le programme */
+	if (_kbhit()) 
+	  stop = (_getch() == TOUCHE_FIN);
+  }while(iter < MAX_TEMPS && !stop && nb_poisson && nb_requin); //tant qui reste des requins et poissons
+
+  /* dessiner l'�tat final de la mer */
+  dessiner_ocean(la_mer, &nbF, &nbS);
+  afficher_etat(iter, nb_poisson, nb_requin);
 
   /* on confirme la raison de la fin du programme */
-
-
-if (fichier != NULL) {
-  fclose(fichier);
-}
-
-return EXIT_SUCCESS;
-}
+  if (!nb_poisson)  message("** Fin du programme due a l'extinction des POISSONS!");
+  if (!nb_requin) message("** Fin du programme due a l'extinction des REQUINS!");
   
+  if (!MODE_AFF) fclose(fich);  //fermer et sauvegarder le fichier de donn�es
+
+  _getch();
+  return EXIT_SUCCESS;
+}
+
 /******************************************************************************/
-/*                         DÉFINITIONS DE FONCTIONS                           */
+/*                         D�FINITIONS DE FONCTIONS                           */
 /******************************************************************************/
 
 /********************************* GETMODE ************************************/
@@ -147,21 +151,21 @@ return EXIT_SUCCESS;
 int getmode()
 {  char c;
 
-     /* On demande et valide le mode désiré */
+     /* On demande et valide le mode d�sir� */
 	 do {
 		 printf("\nVoulez-vous avec affichage (O)ui/(N)on ? ");
 		 fflush(stdin);
 		 scanf("%c",&c);
 		 c = toupper(c);
-	 } while ((c != 'O') && (c != 'N'));   //doit être soit 'O' ou 'N'!!
+	 } while ((c != 'O') && (c != 'N'));   //doit �tre soit 'O' ou 'N'!!
 	 
 	 system("cls");
 	 return (c == 'O') ? 1 : 0;   //on retourne soit 0/1 selon le choix
 }
 
 /**************************** chasser_poissons ********************************/
-/* Reçoit la liste des poissons, la liste des requins et la mer.              */
-/* On identifie les poissons qui seront mangés par les requins.               */
+/* Re�oit la liste des poissons, la liste des requins et la mer.              */
+/* On identifie les poissons qui seront mang�s par les requins.               */
 /******************************************************************************/
 void chasser_poissons(t_liste_poissons *les_poissons, t_liste_requins *les_requins, 
 	                  t_ocean la_mer){
@@ -170,7 +174,7 @@ void chasser_poissons(t_liste_poissons *les_poissons, t_liste_requins *les_requi
   int i, pos, mange,
 	  px, vx, py, vy;  //pos. temporaires: (px, py)= poisson, (vx, vy)= requin
   
-  /* Pour tous les poissons (on doit re-vérifier à chaque fois!!).. */
+  /* Pour tous les poissons (on doit re-v�rifier � chaque fois!!).. */
   for (i=0; i < get_nb_poisson(les_poissons); i++){
     nemo = get_poisson(les_poissons, i);    //obtenir CE poisson
 	get_position(&nemo, &px, &py);   //..et sa position
@@ -185,19 +189,19 @@ void chasser_poissons(t_liste_poissons *les_poissons, t_liste_requins *les_requi
 		  tuer_poisson(les_poissons, i, la_mer);
 		  mange = 1;
 
-		  /* on récupère l'indice du requin qui vient de manger ce poisson */
+		  /* on r�cup�re l'indice du requin qui vient de manger ce poisson */
 		  pos = numero_case(la_mer, vx, vy);
           jaws = get_requin(les_requins, pos);   //obtenir CE requin
-		  ajout_energie(&jaws, JRS_DIGESTION);  //..et on augmente son indice d'énergie
+		  ajout_energie(&jaws, JRS_DIGESTION);  //..et on augmente son indice d'�nergie
 
-		  /* remettre le requin modifié dans la liste */
+		  /* remettre le requin modifi� dans la liste */
 	      modifier_requin(les_requins, pos, &jaws);  
 
 		  vy = py+1;  vx = px+1;    //pour quitter les 2 boucles For
 		  i--;         //pour rester au MEME endroit dans la liste des poissons!
 	    }
 
-	//si le poisson n'a pas été mangé, on vérifie si il meurt de viellesse
+	//si le poisson n'a pas �t� mang�, on v�rifie si il meurt de viellesse
 	if (!mange) {
 		if (est_mort(&nemo, MAX_AGE_POISSON)) {
 			tuer_poisson(les_poissons, i, la_mer);
@@ -208,13 +212,13 @@ void chasser_poissons(t_liste_poissons *les_poissons, t_liste_requins *les_requi
 }
 
 /****************************** requins_morts *********************************/
-/* Reçoit la liste de requins et la mer.                                      */
+/* Re�oit la liste de requins et la mer.                                      */
 /* On identifie les requins qui vont mourir de faim.                          */
 /******************************************************************************/
 void requins_morts(t_liste_requins *les_requins, t_ocean la_mer){
   t_animal jaws;   //requin temporaire
  
-  /* Pour tous les requins (on doit re-vérifier à chaque fois!!).. */
+  /* Pour tous les requins (on doit re-v�rifier � chaque fois!!).. */
   for (int i=0; i < get_nb_requins(les_requins); i++){
     jaws = get_requin(les_requins, i);   //obtenir CE requin
 
@@ -227,9 +231,9 @@ void requins_morts(t_liste_requins *les_requins, t_ocean la_mer){
 }
 
 /**************************** deplacer_requins ********************************/
-/* Reçoit la liste de requins et la mer.                                      */
-/* On ajoute des bébé-requins a la liste s'il y a lieu.                       */
-/* On déplace les requins qui restent de une position-écran.                  */
+/* Re�oit la liste de requins et la mer.                                      */
+/* On ajoute des b�b�-requins a la liste s'il y a lieu.                       */
+/* On d�place les requins qui restent de une position-�cran.                  */
 /******************************************************************************/
 void deplacer_requins(t_liste_requins *les_requins, t_ocean la_mer){
   t_animal jaws;    //requin temporaire
@@ -238,25 +242,25 @@ void deplacer_requins(t_liste_requins *les_requins, t_ocean la_mer){
   /* Pour tous les requins restants.. */
   for (i=0; i < nb_requins; i++){
     jaws = get_requin(les_requins, i);   //obtenir CE requin
-	inc_age(&jaws, NB_JRS_PUB_SHRK);              //..et incrémenter son age
+	inc_age(&jaws, NB_JRS_PUB_SHRK);              //..et incr�menter son age
 	dec_energie(&jaws);
 
-	/* SI il est pret a procréer on ajoute un bébé-requin a la liste */
+	/* SI il est pret a procr�er on ajoute un b�b�-requin a la liste */
 	if (puberte_atteinte(&jaws, NB_JRS_PUB_SHRK, NB_JRS_GEST_SHRK))
 	  ajouter_requin(les_requins, &jaws, la_mer);
 	else 
-	  /* sinon on le déplace */
+	  /* sinon on le d�place */
 	  deplacer_requin(&jaws, i, la_mer);
 
-	/* remettre le requin modifié dans la liste */
+	/* remettre le requin modifi� dans la liste */
 	modifier_requin(les_requins, i, &jaws);  
   }
 }
 
 /*************************** deplacer_poissons ********************************/
-/* Reçoit la liste de poissons et la mer.                                     */
-/* On ajoute des bébé-poissons a la liste s'il y a lieu.                      */
-/* On déplace les poissons qui restent de une position-écran.                 */
+/* Re�oit la liste de poissons et la mer.                                     */
+/* On ajoute des b�b�-poissons a la liste s'il y a lieu.                      */
+/* On d�place les poissons qui restent de une position-�cran.                 */
 /******************************************************************************/
 void deplacer_poissons(t_liste_poissons *les_poissons, t_ocean la_mer){
   t_animal nemo;         //poisson temporaire
@@ -265,22 +269,20 @@ void deplacer_poissons(t_liste_poissons *les_poissons, t_ocean la_mer){
   /* Pour tous les poissons restants.. */
   for (i=0; i < nb_poisson; i++){
     nemo = get_poisson(les_poissons, i);   //obtenir CE poisson
-	inc_age(&nemo, NB_JRS_PUB_POISSON);            //..et incrémenter son age
+	inc_age(&nemo, NB_JRS_PUB_POISSON);            //..et incr�menter son age
 
-	/* SI il est pret a procréer on ajoute un bébé-poisson a la liste */
+	/* SI il est pret a procr�er on ajoute un b�b�-poisson a la liste */
 	if (puberte_atteinte(&nemo, NB_JRS_PUB_POISSON, NB_JRS_GEST_POISSON)) {
-		if (ajouter_poisson(les_poissons, &nemo, la_mer))    //si il a réussi a procréer..
-			dec_energie(&nemo);                         //perte d'énergie si il a accouché
+		if (ajouter_poisson(les_poissons, &nemo, la_mer))    //si il a r�ussi a procr�er..
+			dec_energie(&nemo);                         //perte d'�nergie si il a accouch�
 	}
 	else 
-	    /* sinon on le déplace */
+	    /* sinon on le d�place */
 	    deplacer_poisson(&nemo, i, la_mer);
 		  
-	/* remettre le poisson modifié dans la liste */
+	/* remettre le poisson modifi� dans la liste */
     modifier_poisson(les_poissons, i, &nemo);
   }
-	
 }
 
-
-
+/******************************************************************************/
