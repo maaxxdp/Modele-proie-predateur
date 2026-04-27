@@ -4,7 +4,7 @@
 /******************************************************************************/
 #include "ocean.h"
 #include <stdio.h>
-
+#include <stdlib.h>
 /*************************** FONCTION PRIVÉE ******************************/
 
 /* Fonction qui renvoie la nouvelle coordonnée (*px, *py) voisine de la
@@ -73,8 +73,6 @@ void vider_ocean(t_ocean mer){
 /* la nouvelle coordonnée de cette case via *posx et *posy.                   */
 /******************************************************************************/
 void trouve_voisin_alea(t_ocean mer, int *posx, int *posy){
-#include <stdlib.h> // rand()
-
 		int voisins[8][2]; // max 8 voisins
 		int nb = 0;
 
