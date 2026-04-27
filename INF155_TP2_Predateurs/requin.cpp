@@ -88,13 +88,13 @@ void remplir_liste_requin(t_liste_requins* les_requin, int nb_requins, t_ocean l
     t_animal nouveau;
     int i, x, y;
 
-    les_requin->Liste = (t_animal*) malloc(nb_requins * sizeof(t_animal));
+    les_requin->Liste = (t_animal*) malloc(MAX_REQUIN * sizeof(t_animal));
 
 if (les_requin->Liste == NULL) {
     return;
 }
 
-les_requin->taille_liste = nb_requins;
+les_requin->taille_liste = MAX_REQUIN;
 les_requin->nb_requin = 0;
 
     for (i = 0; i < nb_requins; i++){
