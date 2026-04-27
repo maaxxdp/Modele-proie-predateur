@@ -11,7 +11,7 @@
    coordonnée (*px, *py) reçue selon le paramètre de direction "dir". */
 static void voisin(int *px, int *py, T_dir dir){
 	//HAUT, HAUT_DR, DROITE, BAS_DR, BAS, BAS_G, GAUCHE, HAUT_G
-	switch(dir)
+	switch(dir) {
 		case HAUT:
 			(*py)++;
 			break;
@@ -47,7 +47,7 @@ static void voisin(int *px, int *py, T_dir dir){
 			(*px)--;
 			(*py)++;
 			break;
- 
+	}
 }
 
 /******************************************************************************/
