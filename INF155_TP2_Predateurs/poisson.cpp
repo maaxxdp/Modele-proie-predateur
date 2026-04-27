@@ -78,11 +78,11 @@ void remplir_liste_poisson(t_liste_poissons * les_poisson, int nb_poisson, t_oce
   t_animal nouveau;
   int i, x, y;
 
-  les_poisson->Liste = (t_animal*) malloc(nb_poisson * sizeof(t_animal));
+  les_poisson->Liste = (t_animal*) malloc(MAX_POISSONS * sizeof(t_animal));
   if (les_poisson->Liste == NULL) {
     return;
 }
-  les_poisson->taille_liste = nb_poisson;
+  les_poisson->taille_liste = MAX_POISSONS;
   les_poisson->nb_poisson = 0;
 
   for (i = 0; i < nb_poisson; i++){
