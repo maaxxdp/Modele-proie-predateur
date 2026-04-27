@@ -5,11 +5,11 @@
 #include"animal.h"
 #include"ocean.h"
 
-#define MAX_REQUIN         100   //nombre maximum de requins dans la mer
-#define MAX_AGE_SHRK     1200   //age maximal du requin 
-#define NB_JRS_PUB_SHRK    90   //nombre de jours avant la puberté
-#define NB_JRS_GEST_SHRK   21   //nombre de jours de gestation
-#define JRS_DIGESTION       5   //valeur ajoutée à l'indice de santé après un repas
+#define MAX_REQUINS       500 //nombre maximal de requins avant la surpopulation
+#define MAX_AGE_REQUIN   1500 //l’âge maximal d’un requin
+#define NB_JRS_PUB_REQUIN  90 //nombre de jours avant la puberté
+#define NB_JRS_GEST_REQUIN 21 //nombre de jours de gestation
+#define JRS_DIGESTION       5 //valeur ajoutée à l'indice d’énergie après un repas
 
 /******************************************************************************/
 /*                         DÉCLARATIONS DE TYPES                              */
